@@ -8,6 +8,7 @@ import { removerContato, editarContato } from '../../store/reducers/contatos'
 const ListaContatos = () => {
   const [estaEditando, setEstaEditando] = useState<number | null>(null)
   const { itens } = useSelector((state: RootReducer) => state.contatos)
+  const [contato, setContato] = useState({ nome: '', email: '', telefone: '' })
   const dispatch = useDispatch()
 
   return (
@@ -29,18 +30,24 @@ const ListaContatos = () => {
                 <>
                   <S.input
                     type="text"
-                    defaultValue={c.nome}
-                    onChange={(e) => (c.nome = e.target.value)}
+                    value={contato.nome}
+                    onChange={(e) =>
+                      setContato({ ...contato, nome: e.target.value })
+                    }
                   />
                   <S.input
                     type="email"
-                    defaultValue={c.email}
-                    onChange={(e) => (c.email = e.target.value)}
+                    value={contato.email}
+                    onChange={(e) =>
+                      setContato({ ...contato, email: e.target.value })
+                    }
                   />
                   <S.input
                     type="tel"
-                    defaultValue={c.telefone}
-                    onChange={(e) => (c.telefone = Number(e.target.value))}
+                    value={contato.telefone}
+                    onChange={(e) =>
+                      setContato({ ...contato, telefone: e.target.value })
+                    }
                   />
                 </>
               ) : (
@@ -58,9 +65,9 @@ const ListaContatos = () => {
                     dispatch(
                       editarContato({
                         id: c.id,
-                        nome: c.nome,
-                        email: c.email,
-                        telefone: c.telefone
+                        nome: contato.nome,
+                        email: contato.email,
+                        telefone: Number(contato.telefone)
                       })
                     )
                     setEstaEditando(null)
@@ -74,7 +81,18 @@ const ListaContatos = () => {
               </>
             ) : (
               <>
-                <S.botao onClick={() => setEstaEditando(c.id)}>Editar</S.botao>
+                <S.botao
+                  onClick={() => {
+                    setEstaEditando(c.id)
+                    setContato({
+                      nome: c.nome,
+                      email: c.email,
+                      telefone: c.telefone.toString()
+                    })
+                  }}
+                >
+                  Editar
+                </S.botao>
                 <S.botaoCancelar onClick={() => dispatch(removerContato(c.id))}>
                   Remover
                 </S.botaoCancelar>
